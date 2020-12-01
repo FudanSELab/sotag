@@ -10,7 +10,14 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = ['Click>=7.0', ]
+requirements = [
+    'Click>=7.0',
+    'numpy>=1.18',
+    'scipy>=1.4.0',
+    'smart_open',
+    'requests',
+    'bs4'
+]
 
 setup_requirements = ['pytest-runner', ]
 
@@ -43,6 +50,10 @@ setup(
     keywords='sotag',
     name='sotag',
     packages=find_packages(include=['sotag', 'sotag.*']),
+    package_data={
+        # If any package contains *.json files, include them:
+        'sotag': ["download/*.zip"],
+    },
     setup_requires=setup_requirements,
     test_suite='tests',
     tests_require=test_requirements,
