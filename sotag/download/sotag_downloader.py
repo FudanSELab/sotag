@@ -257,7 +257,7 @@ class SOTagDownloader:
     def get_tag_info_cache(self):
         return self.so_tag_item_collection
 
-    def save(self, path: object) -> object:
+    def save(self, path: str):
         self.so_tag_item_collection.save(path)
 
     def init(self, path):

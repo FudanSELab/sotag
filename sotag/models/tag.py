@@ -132,6 +132,11 @@ class SOTagItemCollection(SaveLoad):
         return True
 
     def __add__(self, other):  # 用于合并两个collection
+        """
+        Add another collection to this
+        :param other: SOTagItemCollection
+        :return: SOTagItemCollection
+        """
         for so_tag_item in other.name2sotag.values():
             self.add_so_tag_item(so_tag_item)
         return self
@@ -145,7 +150,12 @@ class SOTagItemCollection(SaveLoad):
         return None
 
     def sub_collection(self, tag_names):
-        subcollection = SOTagItemCollection()  # 给定一个名字列 从原来collection中拷贝出一个子collection
+        """
+        copy a sub_collection from this collection by using some tags
+        :param tag_names: [str]
+        :return: SOTagItemCollection
+        """
+        subcollection = SOTagItemCollection()
         valid_tag_name = self.get_tag_names()
         for tag_name in tag_names:
             if tag_name in valid_tag_name:
@@ -160,13 +170,3 @@ class SOTagItemCollection(SaveLoad):
 
     def get_all_tag_name(self):
         return set(self.name2sotag.keys()) | set(self.synonyms2tagname.keys())
-
-# class SOTagSynonymsCollection(SaveLoad):
-#     def __init__(self):
-#         self.synonyms_collection = {}
-#
-#     def update_synonyms_collection(self, synonyms_collection):
-#         self.synonyms_collection = synonyms_collection
-#
-#     def get_synonyms_collection(self):
-#         return self.synonyms_collection

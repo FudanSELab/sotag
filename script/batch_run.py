@@ -4,13 +4,13 @@ from sotag.download.sotag_downloader import SOTagDownloader
 
 
 def run_batch(sta: int, end: int):
+    save_name = "../data/run_{}_{}.bin".format(sta, end)
     searcher = SOTagDownloader()
     batch_tag_dict = {k: searcher.tag_dict[k] for k in list(searcher.tag_dict)[sta:end]}
     for tag in batch_tag_dict.keys():
         print(tag)
         item = searcher.get_tag_item_for_one_tag(tag)
         searcher.so_tag_item_collection.add_so_tag_item(item)
-    save_name = "../data/run_{}_{}.bin".format(sta, end)
     searcher.save(save_name)
 
 
