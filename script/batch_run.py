@@ -10,7 +10,7 @@ def run_batch(sta: int, end: int):
         print(tag)
         item = searcher.get_tag_item_for_one_tag(tag)
         searcher.so_tag_item_collection.add_so_tag_item(item)
-    save_name = "./data/run_{}_{}.bin".format(sta, end)
+    save_name = "../data/run_{}_{}.bin".format(sta, end)
     searcher.save(save_name)
 
 

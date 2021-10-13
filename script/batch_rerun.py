@@ -5,7 +5,7 @@ from sotag.models.tag import SOTagItem
 
 
 def rerun_batch(sta: int, end: int):
-    save_name = "./data/run_{}_{}.bin".format(sta, end)
+    save_name = "../data/run_{}_{}.bin".format(sta, end)
     searcher = SOTagDownloader(save_name)
     batch_tag_dict = {k: searcher.tag_dict[k] for k in list(searcher.tag_dict)[sta:end]}
     num = 0
