@@ -18,16 +18,31 @@ class SOTagDownloader:
     maxTryNum = 5
     user_agent = {"user-agent": "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; SV1; .NET CLR 1.1.4322)"}
     __so_path = os.path.dirname(os.path.abspath(__file__))
-    DEFAULT_TAGS_META_FILE_PATH = str(Path(__so_path) / "stackoverflow.com-Tags.zip")
+    DEFAULT_TAGS_META_FILE_PATH = str(
+        Path(__so_path) / "stackoverflow.com-Tags2.0.zip")  # https://archive.org/download/stackexchange/
 
     def __init__(self, so_tag_item_collection_path=None):
-        self.tag_dict = self.load_tags_meta()
-        self.synonyms_data = {}
-        self.init_all_synonyms()
+        self.tag_dict = self.load_tags_meta()  # 读取tags2.0，字典,TagName:xml
+        self.synonyms_data = {}   # tage_to:{tage_from,...}
+        #  self.init_all_synonyms()
         if so_tag_item_collection_path:
             self.so_tag_item_collection: SOTagItemCollection = SOTagItemCollection.load(so_tag_item_collection_path)
         else:
             self.so_tag_item_collection = SOTagItemCollection()
+
+    # def __init__(self, so_tag_item_collection_path=None, so_tag_synonyms_collection_path=None):
+    #     self.tag_dict = self.load_tags_meta()  # 读取tags2.0，此字典可用TagName取该行xml
+    #     self.synonyms_data = {}   # tage_to:{tage_from,...}
+    #     if so_tag_synonyms_collection_path:
+    #         self.synonyms_collection: SOTagSynonymsCollection = SOTagSynonymsCollection.load(so_tag_synonyms_collection_path)
+    #     else:
+    #         self.init_all_synonyms()
+    #         self.synonyms_collection: SOTagSynonymsCollection.update_synonyms_collection(self.synonyms_data)
+    #
+    #     if so_tag_item_collection_path:
+    #         self.so_tag_item_collection: SOTagItemCollection = SOTagItemCollection.load(so_tag_item_collection_path)
+    #     else:
+    #         self.so_tag_item_collection = SOTagItemCollection()
 
     @catch_exception
     def load_tags_meta(self, tag_path=DEFAULT_TAGS_META_FILE_PATH):
@@ -37,6 +52,7 @@ class SOTagDownloader:
 
         with zipfile.ZipFile(tag_path, 'r') as z:
             f = z.open('Tags.xml')
+
         doc = parse(f)
         root = doc.getroot()
         tag_data = []
@@ -66,22 +82,15 @@ class SOTagDownloader:
         info_html = ""
         if html:
             soup = BeautifulSoup(html, 'html.parser', from_encoding='utf-8')
-            text_div = soup.find('div', class_='post-text')
+            text_div = soup.find('div', class_='s-prose js-post-body') # change post-text to s-prose js-post-body
             short_div = text_div.find('div', class_="welovestackoverflow")
-            if short_div:
-                p = short_div.find('p')
-                short_text = p.text
-                info_html += str(short_div)
-            long_text = ""
-            while True:
-                item = short_div.find_next_sibling()
-                item_current = str(item)
-                if item_current.startswith("<p>"):
-                    long_text += item.text + "\n"
-                    info_html += str(item)
-                    short_div = item
-                else:
-                    break
+            p = short_div.find('p')
+            short_text = p.text
+            info_html += str(short_div)
+            for item_div in short_div.find_next_siblings():
+                item_str = str(item_div)
+                long_text += item_div.text + "\n"
+                info_html += str(item_div)
             return short_text, long_text, info_html
         else:
             return short_text, long_text, info_html
@@ -227,7 +236,7 @@ class SOTagDownloader:
         self.init_all_synonyms()
         valid_tag = set()
         for tag, so_tag_item in self.so_tag_item_collection.name2sotag:
-            if tag in self.synonyms_data.keys():
+            if tag in self.synonyms_data.keys():  # 更新 放回
                 so_tag_item.update_tag_synonyms()
                 self.so_tag_item_collection.add_so_tag_item(so_tag_item)
             if so_tag_item.get_long_description or so_tag_item.get_short_description:
@@ -248,7 +257,7 @@ class SOTagDownloader:
     def get_tag_info_cache(self):
         return self.so_tag_item_collection
 
-    def save(self, path):
+    def save(self, path: object) -> object:
         self.so_tag_item_collection.save(path)
 
     def init(self, path):
