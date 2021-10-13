@@ -109,4 +109,3 @@ ENV/
 
 *.bin
 *.ipynb
-/data/
