@@ -28,12 +28,13 @@ class TestSoTagSearcher(TestCase):
         print(item.get_tag_synonyms())
         print('_______________________________________html________________________________________')
         print(item.get_info_html())
+        searcher.save('test.bin')
 
     def test_show_one_tag_in_collection(self):
         # 此函数用于测试 在本地的某个bin中 是否有 某个tag的全部SOTagItem类型中定义的数据 ，参数是一个地址 和一个tag字符串
         path = Path(ROOT_DIR)
-        bin_path = str(path / "data/run_100_10000.bin")
-        tag = 'compiz'
+        bin_path = str(path / "tests/download/test.bin")
+        tag = 'python'
 
         searcher = SOTagDownloader(so_tag_item_collection_path=bin_path)
         item: SOTagItem = searcher.so_tag_item_collection.get_so_tag_item(tag)
@@ -54,8 +55,8 @@ class TestSoTagSearcher(TestCase):
     def test_bin_tag_items_to_csv(self):
         # 此函数用于将 本地某个bin中的数据 格式化保存到 本地csv，方便测试查看，一般不用
         path = Path(ROOT_DIR)
-        bin_path = str(path / "data/so_tag_info2.bin")
-        csv_path = str(path / "data/test2.csv")
+        bin_path = str(path / "tests/download/test.bin")
+        csv_path = str(path / "tests/download/test2.csv")
 
         searcher = SOTagDownloader(so_tag_item_collection_path=bin_path)
         collection = searcher.so_tag_item_collection
